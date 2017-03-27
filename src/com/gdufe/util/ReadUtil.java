@@ -23,7 +23,7 @@ public class ReadUtil {
 				byte[] buf = new byte[1024];
 				int len;
 				while((len=in.read(buf))!=-1){
-					html += new String(buf,0,buf.length,"utf-8");
+					html += new String(buf,0,len,"utf-8");
 				}
 			} catch (IllegalStateException | IOException e) {
 				e.printStackTrace();

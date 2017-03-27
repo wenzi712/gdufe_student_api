@@ -1,15 +1,19 @@
 package com.gdufe.query;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONObject;
+import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -20,7 +24,6 @@ import com.gdufe.login.LoginingInfo;
 import com.gdufe.login.Status;
 import com.gdufe.model.Course;
 import com.gdufe.util.HttpUtil;
-import com.gdufe.util.ReadUtil;
 
 public class CourseQuery {
 
@@ -105,7 +108,14 @@ public class CourseQuery {
 	
 	
 	private Element getTable(HttpEntity entity){
-		String html = ReadUtil.read2Str(entity);
+		String html = "";
+		try {
+			html += EntityUtils.toString(entity);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		Document doc = Jsoup.parse(html);
 		Element table = doc.getElementById("kbtable");
@@ -129,23 +139,56 @@ public class CourseQuery {
 		Elements divs = kbContent.select("div:contains(周)");
 
 		for(Element div:divs){
-			String[] str = div.text().split(" ");
-			if(str.length!=5)
-				continue;
 			Course c = new Course();
-			c.setCourseName(str[0]);
-			c.setTeacherName(str[1]);
-			c.setCourseWeek(str[2]);
-			c.setLocation(str[3]);
-			c.setCourseTime(str[4]);
+			String _div = div.toString();
+			//这里.与行匹配符不匹配
+			String regex1 = "<div.+>\\n.*";
+			Pattern p = Pattern.compile(regex1);
+			Matcher m = p.matcher(_div);
+			if(m.find()){
+				c.setCourseName(Jsoup.parse(m.group(0)).text());
+			}
+			
+			
+			String[] str = div.getElementsByTag("font").text().split(" ");
+			c.setTeacherName(str[0]);
+			c.setCourseWeek(str[1]);
+			c.setLocation(str[2]);
+			
+			String regex2 = "\\[\\d\\d-\\d\\d\\]节";
+			Pattern p2 = Pattern.compile(regex2);
+			Matcher m2 = p2.matcher(_div);
+			if(m2.find()){
+				c.setCourseTime(m2.group());
+			}
+			
+			
+			
+			String id = div.attr("id");
+			int _id = id.charAt(id.length()-3)-'0';
+			c.setDay(_id);
+			
 			set.add(c);
-			//有时候会抽取到一些不合规的信息，这里作处理含有数字的
-			/*if(!str[0].matches(".*\\d+.*")){
-				course.setCourseName(str[0]);
-			}*/
 		}
 		return set;
 	}
 	
+	//返回一学期的所有课程名
+	public Set<String> getCourseNames(String date1,String date2,int term){
+		Element table = getScheduleElem(date1,date2,term);
+		Elements kbContent = table.getElementsByClass("kbcontent");
+		Elements divs = kbContent.select("div:contains(周)");
+		
+		Set<String> set = new HashSet<String>();
+		for(Element div:divs){
+			
+			String[] str = div.text().split(" ");
+			if(str.length!=5)
+				continue;
+			
+			set.add(str[0]);
+		}
+		return set;
+	}
 	
 }

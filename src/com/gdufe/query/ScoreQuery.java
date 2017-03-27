@@ -1,25 +1,30 @@
 package com.gdufe.query;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import com.gdufe.Addr.Address;
 import com.gdufe.login.LoginingInfo;
 import com.gdufe.login.Status;
+import com.gdufe.model.Course;
+import com.gdufe.model.Score;
 import com.gdufe.util.HttpUtil;
-import com.gdufe.util.ReadUtil;
 
 public class ScoreQuery {
 
@@ -38,16 +43,11 @@ public class ScoreQuery {
 	 * 根据课程名获取课程成绩
 	 * 返回的是jsoup的格式
 	 * */
-	public Element getScoreElemByCourseName(String courseName){
+	private Element getScoreElemByCourseName(String courseName){
 		if(loginingInfo.getLoginStatus()==Status.OFF_LOGIN){
 			throw new RuntimeException("off-login,please login");
 		}
 		
-		//kcmc:离散数学
-		//fxkc:0
-		//xsfs:all
-		//kksj:
-		//kcxz:
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("kksj",""));
 		params.add(new BasicNameValuePair("kcxz",""));
@@ -61,24 +61,51 @@ public class ScoreQuery {
 		return getScoreTable(entity);
 	}
 	
-	public Element getScoreTable(HttpEntity entity){
-		String html = ReadUtil.read2Str(entity);
+	private Element getScoreTable(HttpEntity entity){
+		String html = "";
+		try {
+			html += EntityUtils.toString(entity);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Document doc = Jsoup.parse(html);
-		//Element table = doc.getElementById("dataList");
-		Element table = doc.getElementsByClass("Nsb_pw").get(3);
+		Element table = doc.getElementById("dataList");
 		return table;
 	}
 
-	public Map<String,String> getScoreMapByCourseName(String courseName){
+	//返回只有一个键值对的Map
+	public Map<String,Score> getScoreMapByCourseName(String courseName){
 		Element table = getScoreElemByCourseName(courseName);
-		String score = table.getElementsByTag("td").get(6).text();
-		Map map = new HashMap<String,String>();
-		map.put(courseName, score);
+		Elements tds = table.getElementsByTag("td");
+		Score s = new Score();
+		
+		s.setTerm(tds.get(1).text());
+		s.setId(tds.get(2).text());
+		s.setName(tds.get(3).text());
+		s.setScore(Integer.parseInt(tds.get(4).text()));
+		s.setCredit(Float.parseFloat((tds.get(5).text())));
+		
+		Map<String,Score> map = new HashMap<String,Score>();
+		map.put(courseName, s);
 		return map;
 	}
 
-	/*public Map<String,String> getScoreMapByTerm(String date1,String date2,int term){
+	/*
+	 * 返回一个学期的所有课程的成绩的set集合
+	 * */
+	public Set<Score> getScoreSetByTerm(String date1,String date2,int term){
+		CourseQuery courseQuery = new CourseQuery(loginingInfo);
+		Set<String> courseOfTerm = courseQuery.getCourseNames(date1, date2, term);
+		Set<Score> socreOfTerm = new HashSet<Score>();
 		
-	}*/
+		for(String c:courseOfTerm){
+			HashMap m = (HashMap) getScoreMapByCourseName(c);
+			socreOfTerm.add((Score)m.get(c));
+		}
+		return socreOfTerm;
+	}
 	
 }

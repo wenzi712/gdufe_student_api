@@ -10,11 +10,19 @@ package com.gdufe.model;
 public class Course {
 	private String courseName;
 	private String teacherName;
-	private String courseWeek;
+	private String courseWeek;	//从第几周到第几周
 	private String location;	//上课地点
 	private String courseTime;
+	private int day;			//周几的课
+	
 	public String getCourseName() {
 		return courseName;
+	}
+	public int getDay() {
+		return day;
+	}
+	public void setDay(int day) {
+		this.day = day;
 	}
 	public void setCourseName(String courseName) {
 		this.courseName = courseName;
@@ -45,11 +53,12 @@ public class Course {
 	}
 	
 	public String toString(){
-		return "course name:"+this.courseName
-				+"teacher name:"+this.teacherName
-				+"course week:"+this.courseWeek
-				+"location:"+this.location
-				+"courseTime:"+this.courseTime;
+		return "course name:"+this.courseName+" "
+				+"teacher name:"+this.teacherName+" "
+				+"course week:"+this.courseWeek+" "
+				+"location:"+this.location+" "
+				+"courseTime:"+this.courseTime+" "
+				+"day:"+this.day;
 	}
 	
 	@Override
@@ -63,9 +72,11 @@ public class Course {
 					&&this.getCourseTime().equals(another.getCourseTime())
 					&&this.getCourseWeek().equals(another.getCourseWeek())
 					&&this.getLocation().equals(another.getLocation())
-					&&this.getTeacherName().equals(another.getTeacherName()))
-					
+					&&this.getTeacherName().equals(another.getTeacherName())
+					&&this.getDay()==another.getDay()){
 				return true;
+			}
+					
 		}
 		return false;
 	}
