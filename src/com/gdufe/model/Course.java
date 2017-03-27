@@ -10,9 +10,11 @@ package com.gdufe.model;
 public class Course {
 	private String courseName;
 	private String teacherName;
-	private String courseWeek;
+	private String courseWeek;	//从第几周到第几周
 	private String location;	//上课地点
 	private String courseTime;
+	private String day;			//周几的课
+	
 	public String getCourseName() {
 		return courseName;
 	}
@@ -63,9 +65,10 @@ public class Course {
 					&&this.getCourseTime().equals(another.getCourseTime())
 					&&this.getCourseWeek().equals(another.getCourseWeek())
 					&&this.getLocation().equals(another.getLocation())
-					&&this.getTeacherName().equals(another.getTeacherName()))
-					
+					&&this.getTeacherName().equals(another.getTeacherName())){
 				return true;
+			}
+					
 		}
 		return false;
 	}

@@ -1,5 +1,6 @@
 package com.gdufe.query;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -8,7 +9,9 @@ import java.util.Set;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -105,7 +108,14 @@ public class CourseQuery {
 	
 	
 	private Element getTable(HttpEntity entity){
-		String html = ReadUtil.read2Str(entity);
+		String html = "";
+		try {
+			html += EntityUtils.toString(entity);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		Document doc = Jsoup.parse(html);
 		Element table = doc.getElementById("kbtable");
