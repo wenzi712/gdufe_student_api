@@ -31,7 +31,7 @@ public class CourseQuery {
 	
 	private static final String CURRENTYEAR = "current";
 	private static final int CURRENTTERM = -1;
-	
+	 
 	/*
 	 * 要先登陆才可以进行查询
 	 * */

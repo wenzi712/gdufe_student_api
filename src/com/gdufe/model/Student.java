@@ -12,9 +12,6 @@ public class Student {
 	private String creditCardId;
 	private Date EnrollTime;
 	
-	
-	
-	
 	public String getCollege() {
 		return college;
 	}
@@ -63,5 +60,28 @@ public class Student {
 	public void setEnrollTime(Date enrollTime) {
 		EnrollTime = enrollTime;
 	}
+	
+	@Override
+	public boolean equals(Object obj){
+		if(this==obj)
+			return true;
+		if(obj instanceof Student){
+			Student anOther = (Student)obj;
+			if(this.getId().equals(anOther.getId()))
+				return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public String toString(){
+		return "Id:"+this.getId()+"\n"
+				+"Name:"+this.getName()+"\n"
+				+"Sex:"+this.getSex()+"\n"
+				+"Class:"+this.getClazz()+"\n"
+				+"Major:"+this.getMajor()+"\n"
+				+"College:"+this.getCollege();
+	}
+	
 	
 }

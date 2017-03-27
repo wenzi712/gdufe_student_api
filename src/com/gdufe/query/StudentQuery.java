@@ -32,7 +32,7 @@ public class StudentQuery {
 	 * 获取学籍信息
 	 * 返回的是jsoup的Element格式
 	 * */
-	public Element getStudentStatusElem(){
+	private Element getStudentStatusElem(){
 		if(loginingInfo.getLoginStatus()==Status.OFF_LOGIN){
 			throw new RuntimeException("off-login,please login");
 		}
@@ -44,7 +44,7 @@ public class StudentQuery {
 	}
 	
 	
-	public Element getTable(HttpEntity entity){
+	private Element getTable(HttpEntity entity){
 		String html = ReadUtil.read2Str(entity);
 		Document doc = Jsoup.parse(html);
 		Element table = doc.getElementById("xjkpTable");
@@ -83,9 +83,6 @@ public class StudentQuery {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		
-		
-		
 		
 		return stu;
 		
