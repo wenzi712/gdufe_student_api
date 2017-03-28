@@ -90,6 +90,7 @@ public class ScoreQuery {
 	 * @param courseName
 	 * 			课程名
 	 * */
+	//返回只有一个键值对的Map
 	public Map<String,Score> getScoreMapByCourseName(String courseName){
 		Element table = getScoreElemByCourseName(courseName);
 		Elements tds = table.getElementsByTag("td");
@@ -108,6 +109,7 @@ public class ScoreQuery {
 
 	/*
 	 * 返回某个学期的所有课程的成绩的set集合
+	 * 返回一个学期的所有课程的成绩的set集合
 	 * */
 	public Set<Score> getScoreSetByTerm(String date1,String date2,int term){
 		CourseQuery courseQuery = new CourseQuery(loginingInfo);
