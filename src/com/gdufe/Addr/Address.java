@@ -14,5 +14,9 @@ public class Address {
 	//∑πø®µÿ÷∑
 	public static final String PROTALHOME = "http://cardinfo.gdufe.edu.cn/gdcjportalHome.action";
 	public static final String PROTALCARDINFO = "http://cardinfo.gdufe.edu.cn/accountcardUser.action";
+
+	public static final String PORTALLOGIN = "http://my.gdufe.edu.cn/userPasswordValidate.portal";
+	public static final String VERIFICATIONIMG = "http://my.gdufe.edu.cn/captchaGenerate.portal";
+	
 	
 }

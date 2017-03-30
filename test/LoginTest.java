@@ -8,6 +8,7 @@ import com.gdufe.login.Status;
 import com.gdufe.model.Course;
 import com.gdufe.model.Score;
 import com.gdufe.model.Student;
+import com.gdufe.model.Score;
 import com.gdufe.query.CourseQuery;
 import com.gdufe.query.ScoreQuery;
 import com.gdufe.query.StudentQuery;
@@ -42,6 +43,5 @@ public class LoginTest {
 			}
 			System.out.println(s);
 		}
-		
 	}
 }
