@@ -26,6 +26,10 @@ import com.gdufe.model.Course;
 import com.gdufe.model.Score;
 import com.gdufe.util.HttpUtil;
 
+/*
+ * 专门用于查询成绩的类
+ * @author lapple
+ * */
 public class ScoreQuery {
 
 	private LoginingInfo loginingInfo;
@@ -41,7 +45,9 @@ public class ScoreQuery {
 	/*
 	 * 
 	 * 根据课程名获取课程成绩
-	 * 返回的是jsoup的格式
+	 * 返回的是jsoup的Element格式
+	 * @param courseName
+	 * 			课程的名字，若课程不存在返回空
 	 * */
 	private Element getScoreElemByCourseName(String courseName){
 		if(loginingInfo.getLoginStatus()==Status.OFF_LOGIN){
@@ -61,6 +67,9 @@ public class ScoreQuery {
 		return getScoreTable(entity);
 	}
 	
+	/*
+	 * 若已经有一个获取了的entity，返回一个score的成绩表
+	 * */
 	private Element getScoreTable(HttpEntity entity){
 		String html = "";
 		try {
@@ -76,7 +85,11 @@ public class ScoreQuery {
 		return table;
 	}
 
-	//返回只有一个键值对的Map
+	/*根据课程的名字返回一个map，里面只有一个键值对，key为课程名，value是一个score对象
+	 * 
+	 * @param courseName
+	 * 			课程名
+	 * */
 	public Map<String,Score> getScoreMapByCourseName(String courseName){
 		Element table = getScoreElemByCourseName(courseName);
 		Elements tds = table.getElementsByTag("td");
@@ -94,7 +107,7 @@ public class ScoreQuery {
 	}
 
 	/*
-	 * 返回一个学期的所有课程的成绩的set集合
+	 * 返回某个学期的所有课程的成绩的set集合
 	 * */
 	public Set<Score> getScoreSetByTerm(String date1,String date2,int term){
 		CourseQuery courseQuery = new CourseQuery(loginingInfo);

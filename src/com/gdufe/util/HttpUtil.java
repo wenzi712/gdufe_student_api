@@ -31,11 +31,14 @@ public class HttpUtil {
 	/*
 	 * 使用post访问网站，获得网站的响应消息response
 	 * @author  Lapple
-	 * @see     java.lang.Object#toString()
-	 * @see     java.lang.StringBuffer
-	 * @see     java.lang.StringBuilder
-	 * @see     java.nio.charset.Charset
-	 * @since   JDK1.0
+	 * @param client
+	 * 			登陆的客户端
+	 * @param postAddr
+	 * 			post的地址
+	 * @param cookie
+	 * 			post需要发送的cookie,用于保存登陆状态
+	 * @param loginParams
+	 * 			post需要发送的参数
 	 * */
 	public static HttpResponse post(HttpClient client,String postAddr,String cookie,List<NameValuePair> loginParams){
 		if(postAddr==null||postAddr.trim().length()==0){
@@ -44,14 +47,12 @@ public class HttpUtil {
 		HttpPost post = new HttpPost(postAddr);
 		HttpResponse response = null;
 		post.setHeader("User-Agent","Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.98 Safari/537.36");
-		post.setHeader("Content-Type","application/x-www-form-urlencoded");
 		if(cookie!=null&&cookie.trim().length()!=0){
 			post.setHeader("Cookie",cookie);
 		}
 		try {
 			//对发送的表单数据进行编码，若有中文这里很容易出错
 			post.setEntity(new UrlEncodedFormEntity(loginParams,"utf-8"));
-			//client = HttpClients.createDefault();
 			response = client.execute(post);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -72,7 +73,7 @@ public class HttpUtil {
 	public static HttpResponse post(LoginingInfo info,List<NameValuePair> postParams){
 		HttpClient client = info.getClient();
 		String visitingAddr = info.getVisitingAddr();
-		return post(client,visitingAddr,info.getCookie(),postParams);
+		return post(client,visitingAddr,info.cookieMaptoString(),postParams);
 	}
 	
 	
@@ -85,7 +86,7 @@ public class HttpUtil {
 		}
 		HttpGet get = new HttpGet(getAddr);
 		get.setHeader("User-Agent","Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.98 Safari/537.36");
-		get.setHeader("Content-Type","application/x-www-form-urlencoded");
+		//get.setHeader("Content-Type","application/x-www-form-urlencoded");
 		HttpResponse response = null;
 		try {
 			response = client.execute(get);
@@ -105,7 +106,7 @@ public class HttpUtil {
 		HttpGet get = new HttpGet(getAddr);
 		get.setHeader("User-Agent","Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.98 Safari/537.36");
 		get.setHeader("Content-Type","application/x-www-form-urlencoded");
-		
+
 		get.setHeader("Cookie",loginCookie);
 		HttpResponse response = null;
 		try {
@@ -115,8 +116,13 @@ public class HttpUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		get.abort();
+/*
+ *这里有一个待修复的bug
+ *这里调用abort终止，ProtalClient登陆发出get请求的时候就会出现socket close异常，原因未知
+ *似乎访问其它网站并不会这样
+ *但是把它注释掉可能会对教务系统的客户端造成影响
+ * */
+//get.abort();
 		return response;
 	}
 	
@@ -126,7 +132,7 @@ public class HttpUtil {
 	public static HttpResponse get(LoginingInfo loginingInfo){
 		HttpClient client = loginingInfo.getClient();
 		String addr = loginingInfo.getVisitingAddr();
-		String cookie =  loginingInfo.getCookie();
+		String cookie =  loginingInfo.cookieMaptoString();
 		return get(client,addr,cookie);
 	}
 	
