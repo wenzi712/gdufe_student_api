@@ -25,6 +25,10 @@ import com.gdufe.login.Status;
 import com.gdufe.model.Course;
 import com.gdufe.util.HttpUtil;
 
+/*专门用于查询课程的对象
+ * @author  Lapple
+ * */
+
 public class CourseQuery {
 
 	private LoginingInfo loginingInfo;
@@ -52,8 +56,12 @@ public class CourseQuery {
 	}
 	
 	/*
-	 * date1格式为xxxx，如2016,
-	 * term只能是1或2，输入大于2的按第2学期处理
+	 *@param  date1
+     *         一个学年的第一年
+     *@param  date2
+     *			一个学年的第二年，与date1相差不超过1
+     *@param  term
+     *			学期，只能是1或者2
 	 * */
 	private Element getScheduleElem(String date1,String date2,int term){
 		List<NameValuePair> postParams = new ArrayList<NameValuePair>();
@@ -91,9 +99,7 @@ public class CourseQuery {
 		}
 		
 
-		if(loginingInfo.getLoginStatus()==Status.OFF_LOGIN){
-			throw new RuntimeException("off-login,please login");
-		}
+		loginingInfo.checkLoginStatus();
 		
 
 		loginingInfo.setVisitingAddr(Address.SCHEDULEQUERY);
@@ -131,6 +137,9 @@ public class CourseQuery {
 		return getScheduleSet(CURRENTYEAR, CURRENTYEAR, CURRENTTERM);
 	}
 	
+	/*
+	 * 获取学期课表，返回的是set，set的每个元素都是一个course
+	 * */
 	public Set<Course> getScheduleSet(String date1,String date2,int term){
 		
 		Set<Course> set = new HashSet<Course>();
@@ -173,7 +182,9 @@ public class CourseQuery {
 		return set;
 	}
 	
-	//返回一学期的所有课程名
+	/*
+	 * 返回某个指定学期的课程名的set集合
+	 * */
 	public Set<String> getCourseNames(String date1,String date2,int term){
 		Element table = getScheduleElem(date1,date2,term);
 		Elements kbContent = table.getElementsByClass("kbcontent");

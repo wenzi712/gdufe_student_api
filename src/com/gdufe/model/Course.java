@@ -1,12 +1,5 @@
 package com.gdufe.model;
 
-/*
- * 	软件工程课程设计
-	尹华讲师（高校）
-	9-16(周)
-	实验楼802
-	[01-02]节
- * */
 public class Course {
 	private String courseName;
 	private String teacherName;

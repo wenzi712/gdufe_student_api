@@ -6,8 +6,10 @@ import com.gdufe.login.Client;
 import com.gdufe.login.LoginingInfo;
 import com.gdufe.login.Status;
 import com.gdufe.model.Course;
+import com.gdufe.model.Score;
 import com.gdufe.model.Student;
 import com.gdufe.query.CourseQuery;
+import com.gdufe.query.ScoreQuery;
 import com.gdufe.query.StudentQuery;
 
 
@@ -18,19 +20,19 @@ public class LoginTest {
 		
 		System.out.println(info.getLoginStatus());
 		
-		/*if(info.getLoginStatus()==Status.ON_LOGIN){
+		if(info.getLoginStatus()==Status.ON_LOGIN){
 			Set<Score> set = new ScoreQuery(info).getScoreSetByTerm("2014","2015", 1);
 			for(Score s:set){
 				System.out.println(s.toString());
 			}
-		}*/
+		}
 		
-		/*if(info.getLoginStatus()==Status.ON_LOGIN){
+		if(info.getLoginStatus()==Status.ON_LOGIN){
 			Set<Course> set = new CourseQuery(info).getScheduleSet("2014","2015", 1);
 			for(Course c:set){
 				System.out.println(c.toString());
 			}
-		}*/
+		}
 		
 		if(info.getLoginStatus()==Status.ON_LOGIN){
 			Student s = new StudentQuery(info).getStudent();

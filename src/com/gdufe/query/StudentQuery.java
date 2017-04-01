@@ -33,9 +33,8 @@ public class StudentQuery {
 	 * 返回的是jsoup的Element格式
 	 * */
 	private Element getStudentStatusElem(){
-		if(loginingInfo.getLoginStatus()==Status.OFF_LOGIN){
-			throw new RuntimeException("off-login,please login");
-		}
+		loginingInfo.checkLoginStatus();
+		
 		loginingInfo.setVisitingAddr(Address.STUDENTSTATUS);
 		HttpResponse response = HttpUtil.get(loginingInfo);
 		HttpEntity entity = response.getEntity();
