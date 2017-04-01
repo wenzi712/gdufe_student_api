@@ -26,6 +26,8 @@ import com.gdufe.util.HttpUtil;
 /*
  * @author lapple
  * */
+import com.gdufe.login.LoginingInfo;
+
 public class LibraryQuery {
 	private LoginingInfo info;
 	

@@ -28,7 +28,6 @@ import com.gdufe.util.HttpUtil;
 /*专门用于查询课程的对象
  * @author  Lapple
  * */
-
 public class CourseQuery {
 
 	private LoginingInfo loginingInfo;
@@ -185,6 +184,8 @@ public class CourseQuery {
 	/*
 	 * 返回某个指定学期的课程名的set集合
 	 * */
+	//返回一学期的所有课程名
+
 	public Set<String> getCourseNames(String date1,String date2,int term){
 		Element table = getScheduleElem(date1,date2,term);
 		Elements kbContent = table.getElementsByClass("kbcontent");
