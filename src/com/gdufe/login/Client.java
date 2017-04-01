@@ -37,7 +37,8 @@ public class Client {
 		
 		HttpResponse response = HttpUtil.post(client,loginAddr,null,loginParams);
 		
-		LoginingInfo info = new LoginingInfo(client,loginAddr);
+		LoginingInfo info = new LoginingInfo(client,Address.INDEX);
+		info.setVisitingAddr(Address.LOGIN);
 		if(check(response)==false){
 			System.out.println("µÇÂ½Ê§°Ü£¬¿ÉÄÜÊÇÕËºÅÃÜÂë´íÎó");
 			return info;

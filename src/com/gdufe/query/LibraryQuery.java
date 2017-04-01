@@ -26,8 +26,6 @@ import com.gdufe.util.HttpUtil;
 /*
  * @author lapple
  * */
-import com.gdufe.login.LoginingInfo;
-
 public class LibraryQuery {
 	private LoginingInfo info;
 	
@@ -56,8 +54,8 @@ public class LibraryQuery {
 	 * &dept=ALL
 	 * */
 	private Element getSearchResultElem(String title){
-		//没有登陆不能查询，抛出异常
-		info.checkLoginStatus();
+		//图书馆没有登陆也能查询
+		//info.checkLoginStatus();
 		
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("strSearchType","title"));

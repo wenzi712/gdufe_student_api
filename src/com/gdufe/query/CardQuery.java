@@ -31,14 +31,6 @@ public class CardQuery {
 	 * */
 	private Element getCardInfoTable(){
 		info.checkLoginStatus();
-
-		if(info.getLoginStatus()==Status.OFF_LOGIN){
-			try {
-				throw new Exception("off-login,please login");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 		//先访问此网站获取饭卡需要的jseeionid,它与信息门户的jseesionid不同
 		info.setVisitingAddr(Address.PROTALHOME);
 		HttpResponse rep = HttpUtil.get(info);

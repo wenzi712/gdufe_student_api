@@ -52,7 +52,7 @@ public class PortalClient {
 			loginedCookie += h.getValue();
 		}
 		
-		LoginingInfo info = new LoginingInfo(client,Address.PORTALLOGIN,loginedCookie);
+		LoginingInfo info = new LoginingInfo(client,Address.PROTALINDEX,loginedCookie);
 		
 		//设置状态码
 		if(rep.getStatusLine().getStatusCode()==200){
@@ -63,12 +63,6 @@ public class PortalClient {
 		
 		
 	}
-	
-	
-	
-	
-	
-	
 	
 	//下载验证码图片到桌面,返回图片对应的cookie
 	public String downloadImg(){

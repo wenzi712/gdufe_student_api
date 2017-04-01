@@ -73,7 +73,7 @@ public class HttpUtil {
 	public static HttpResponse post(LoginingInfo info,List<NameValuePair> postParams){
 		HttpClient client = info.getClient();
 		String visitingAddr = info.getVisitingAddr();
-		return post(client,visitingAddr,info.cookieMaptoString(),postParams);
+		return post(client,visitingAddr,info.cookieMap2String(),postParams);
 	}
 	
 	
@@ -100,6 +100,12 @@ public class HttpUtil {
 	}
 	
 	/*
+	 * @param client
+	 * 			客户端
+	 * @param getAddr
+	 * 			需要get的地址
+	 * @param loginCookie
+	 * 			带有保持登陆状态的cookie
 	 * 使用带有cookie的get访问
 	 * */
 	public static HttpResponse get(HttpClient client,String getAddr,String loginCookie){
@@ -132,7 +138,7 @@ public class HttpUtil {
 	public static HttpResponse get(LoginingInfo loginingInfo){
 		HttpClient client = loginingInfo.getClient();
 		String addr = loginingInfo.getVisitingAddr();
-		String cookie =  loginingInfo.cookieMaptoString();
+		String cookie =  loginingInfo.cookieMap2String();
 		return get(client,addr,cookie);
 	}
 	

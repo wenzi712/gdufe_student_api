@@ -1,10 +1,25 @@
 package com.gdufe.login;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+
+import com.gdufe.util.HttpUtil;
 
 /*
  * 保存登陆的信息，使用的client,保持会话的cookie，登陆状态loginStatus
@@ -98,12 +113,19 @@ public class LoginingInfo {
 		
 	}
 	
-	public String cookieMaptoString(){
+	/*
+	 * 把cookieMap转换为字符转
+	 * */
+	public String cookieMap2String(){
 		String cookieStr = "";
-		Set<String> keySet = cookiesMap.keySet();
-		for(String k:keySet){
-			cookieStr += k+"="+cookiesMap.get(k)+";";
+		Set<String> keySet;
+		if(cookiesMap!=null){
+			keySet = cookiesMap.keySet();
+			for(String k:keySet){
+				cookieStr += k+"="+cookiesMap.get(k)+";";
+			}
 		}
+			
 		return cookieStr;
 	}
 	
@@ -118,4 +140,90 @@ public class LoginingInfo {
 		}
 	}
 	
+	/*
+	 * @param fileName
+	 * 			把登陆 持久化到fileName文件名的文件中
+	 * 			使用第一行cookie对应保存主机Host地地址
+	 * */
+	public void cookiePersist(String fileName){
+		BufferedWriter bufw = null;
+		try {
+			bufw = new BufferedWriter(
+					new OutputStreamWriter(new FileOutputStream(fileName)));
+			bufw.write("Host:"+this.loginAddr+"\n");
+			bufw.write(this.cookieMap2String());
+			bufw.flush();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}finally{
+			if(bufw!=null){
+				try {
+					bufw.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	/*
+	 * 
+	 * @param fileName
+	 * 			在文件中读取cookie，并自动组装一个LoginingInfo对象，并对cookie的状态进行测试，判断其是否过期
+	 * */
+	public static LoginingInfo readCookie(String fileName){
+		BufferedReader bufr;
+		String cookie = "";
+		String host = "";
+		try {
+			bufr = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
+			String str = "";
+			int len = 0;
+			boolean firstLine = true;
+			while((str=bufr.readLine())!=null){
+				//第一行保存访问的地址，不读
+				if(firstLine){
+					host += str.substring(5);
+					firstLine = false;
+					continue;
+				}
+				cookie += str;
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+ 			e.printStackTrace();
+		}
+		
+		LoginingInfo info = new LoginingInfo(HttpClients.createDefault(),host,cookie);
+		info.setVisitingAddr(host);
+		HttpResponse rep = HttpUtil.get(info);
+		
+		//检查cookie是否过期，这里判断效率很慢。。以后心情好再改吧
+		String html = "";
+		try {
+			html = EntityUtils.toString(rep.getEntity());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		String regex = ".*用户名.*";
+		Pattern p = Pattern.compile(regex);
+		Matcher m = p.matcher(html);
+		if(m.find()){
+			info.setLoginStatus(Status.OFF_LOGIN);
+			try {
+				throw new Exception("cookie过期，重新登录");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}else{
+			info.setLoginStatus(Status.ON_LOGIN);
+		}
+		return info;
+	}
 }
